@@ -1,11 +1,13 @@
 import os
 import socket
-import psutil
-import time
 import logging.config
 from models import PCInfo
 from models import MetricInfo
 from settings.logging import LOGGING_CONFIG
+from metrics.cpu_metric import CPUmetric
+from metrics.disk_metric import Diskmetric
+from metrics.memory_metric import RAMmetric
+from metrics.network_metric import Networkmetric
 
 logging.config.dictConfig(LOGGING_CONFIG)
 
@@ -22,16 +24,30 @@ def main():
     logger.info('Finished')
 
 
-# def set_system_info():
+def set_system_info():
+    memore = RAMmetric()
+    disk = Diskmetric()
+    network = Networkmetric()
+    cpu = CPUmetric()
 
-# obj=MetricInfo(name="CPU", value=get_CPU(), time=time.asctime())
-# obj.save()
-# obj=MetricInfo(name="Memory", value=get_memory(), time=time.asctime())
-# obj.save()
-# obj=MetricInfo(name='Disks', value=get_disks(), time=time.asctime())
-# obj.save()
-# obj=MetricInfo(name='Network', value=get_network(), time=time.asctime())
-# obj.save()
+    memore.retrieve()
+    disk.retrieve()
+    network.retrieve()
+    cpu.retrieve()
+
+    list_metric = []
+
+    list_metric.append(memore.parse_results())
+    list_metric.append(disk.parse_results())
+    list_metric.append(network.parse_results())
+    list_metric.append(cpu.parse_results())
+
+    for metric in list_metric:
+        for i in metric:
+            # print('{name} = TIME: {time} = {value}'.format(name=i.name, value=i.value, time=i.time))
+            obj = MetricInfo(name=i.name, value=i.value, time=i.time)
+            obj.save()
+
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -45,23 +61,6 @@ def get_ip():
     return IP
 
 
-from metrics.CPU_metric import CPUMetric
-from metrics.disk_metric import Disk
-from metrics.memory_metric import Memory
-from metrics.network_metric import Network
-
 if __name__ == '__main__':
-    memore = Memory()
-    memore.retrieve()
-    # print(memore.parse_results())
-
-    # for i in memore.parse_results():
-    #     print(i.name + " = "+i.time +' = '+ i.value)
-
-    cpu = CPUMetric()
-    cpu.retrieve()
-    # cpu.parse_results()
-    [print(i.value) for i in cpu.parse_results()]
-
     # main()
-    # set_system_info()
+    set_system_info()

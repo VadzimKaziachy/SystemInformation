@@ -7,8 +7,8 @@ def migrate(migrator, database, **kwargs):
     @migrator.create_model
     class PCInfo(pw.Model):
         id = pw.PrimaryKeyField()
-        name = pw.CharField(unique=True)
-        ip = pw.CharField(unique=True)
+        name = pw.CharField(unique=False)
+        ip = pw.CharField(unique=False)
 
 
 def rollback(migrator, database, fake=False, **kwargs):

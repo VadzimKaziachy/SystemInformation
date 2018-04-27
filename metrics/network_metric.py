@@ -1,27 +1,30 @@
-import time
 import psutil
 from metrics.base_metric import Metric
 from models import MetricInfo
+from datetime import datetime
 
 
-class Network(Metric):
+class Networkmetric(Metric):
 
     def __init__(self):
-        super(Network, self).__init__(type='Network metric')
+        super(Networkmetric, self).__init__(type='network')
 
     def retrieve(self):
         self._data = psutil.net_io_counters(pernic=False)
-        self._time = time.asctime()
+        self._time = datetime.now().strftime('%s')
 
     def parse_results(self):
         result = []
 
         for field in self._data._fields:
-            metric = MetricInfo(
-                name=self._type,
+            metricInfo = MetricInfo(
+                name=self.generate_name(field),
                 value=str(getattr(self._data, field)),
                 time=self._time
             )
-            result.append(metric)
+            result.append(metricInfo)
 
         return result
+
+    def generate_name(self, field):
+        return '.'.join([self._type, field])

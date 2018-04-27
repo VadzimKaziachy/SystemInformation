@@ -1,17 +1,17 @@
-import time
 import psutil
 from metrics.base_metric import Metric
 from models import MetricInfo
+from datetime import datetime
 
 
-class CPUMetric(Metric):
+class CPUmetric(Metric):
 
     def __init__(self):
-        super(CPUMetric, self).__init__(type='CPUmetric metric')
+        super(CPUmetric, self).__init__(type='cpu')
 
     def retrieve(self):
         self._data = psutil.cpu_times_percent(interval=1, percpu=False)
-        self._time = time.asctime()
+        self._time = datetime.now().strftime('%s')
 
     def parse_results(self):
         result = []
@@ -24,11 +24,13 @@ class CPUMetric(Metric):
 
         for field in self._data._fields:
             metricInfo = MetricInfo(
-                name=self._type,
-                value='{type} : {filed} : {value}'.format(type=self._type, filed=field,
-                                                          value=str(getattr(self._data, field))),
+                name=self.generate_name(field),
+                value=str(getattr(self._data, field)),
                 time=self._time
             )
             result.append(metricInfo)
 
         return result
+
+    def generate_name(self, field):
+        return '.'.join([self._type, field])

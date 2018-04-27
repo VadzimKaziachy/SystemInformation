@@ -20,9 +20,10 @@ class PCInfo(BaseModel):
         table_name = 'pc_info'
 
 class MetricInfo(BaseModel):
-    value = CharField(unique=True, max_length=255)
-    name = CharField(unique=True)
-    time = CharField(unique=True)
+    id = PrimaryKeyField
+    value = CharField(unique=False, max_length=255, primary_key=False)
+    name = CharField(unique=False, primary_key=False)
+    time = CharField(unique=False, primary_key=False)
 
     class Meta:
         table_name ='metric_info'
