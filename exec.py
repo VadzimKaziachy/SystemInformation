@@ -1,42 +1,37 @@
 import os
 import socket
 import psutil
+import time
 import logging.config
-from models import db
 from models import PCInfo
-from models import PCInfoSystem
+from models import MetricInfo
 from settings.logging import LOGGING_CONFIG
-
 
 logging.config.dictConfig(LOGGING_CONFIG)
 
 logger = logging.getLogger('app')
 
-def main():
 
-    db.create_tables([PCInfo])
+def main():
     obj = PCInfo(name=os.uname().nodename, ip=get_ip())
     obj.save()
-
-
 
     logger.info('Started')
     query = PCInfo.select(PCInfo.name, PCInfo.ip)
     [print('{name} : {ip}'.format(name=x.name, ip=x.ip)) for x in query]
     logger.info('Finished')
 
-def set_system_info():
-    db.create_tables([PCInfoSystem])
-    obj = PCInfoSystem(info=get_CPU(), name=os.uname().nodename)
-    obj.save()
-    obj = PCInfoSystem(info=get_memory(), name=os.uname().nodename)
-    obj.save()
-    obj = PCInfoSystem(info=get_disks(), name=os.uname().nodename)
-    obj.save()
-    obj = PCInfoSystem(info=get_network(), name=os.uname().nodename)
-    obj.save()
 
+# def set_system_info():
 
+# obj=MetricInfo(name="CPU", value=get_CPU(), time=time.asctime())
+# obj.save()
+# obj=MetricInfo(name="Memory", value=get_memory(), time=time.asctime())
+# obj.save()
+# obj=MetricInfo(name='Disks', value=get_disks(), time=time.asctime())
+# obj.save()
+# obj=MetricInfo(name='Network', value=get_network(), time=time.asctime())
+# obj.save()
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -49,20 +44,24 @@ def get_ip():
         s.close()
     return IP
 
-def get_CPU():
-    return psutil.cpu_times_percent(interval=1, percpu=True)
 
-def get_memory():
-    return psutil.virtual_memory()
-
-def get_disks():
-    return psutil.disk_usage('/')
-
-def get_network():
-    return psutil.net_io_counters(pernic=False)
-
-
+from metrics.CPU_metric import CPUMetric
+from metrics.disk_metric import Disk
+from metrics.memory_metric import Memory
+from metrics.network_metric import Network
 
 if __name__ == '__main__':
+    memore = Memory()
+    memore.retrieve()
+    # print(memore.parse_results())
+
+    # for i in memore.parse_results():
+    #     print(i.name + " = "+i.time +' = '+ i.value)
+
+    cpu = CPUMetric()
+    cpu.retrieve()
+    # cpu.parse_results()
+    [print(i.value) for i in cpu.parse_results()]
+
     # main()
-    set_system_info()
+    # set_system_info()

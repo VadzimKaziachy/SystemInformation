@@ -14,14 +14,15 @@ class BaseModel(Model):
 class PCInfo(BaseModel):
     id = PrimaryKeyField()
     name = CharField(unique=True)
-    ip = CharField(unique=True)
+    ip_address = CharField(unique=True)
 
     class Meta:
         table_name = 'pc_info'
 
 class MetricInfo(BaseModel):
-    info = CharField(unique=True, max_length=255)
+    value = CharField(unique=True, max_length=255)
     name = CharField(unique=True)
+    time = CharField(unique=True)
 
     class Meta:
         table_name ='metric_info'
