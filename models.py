@@ -6,6 +6,7 @@ from settings import database
 
 db = MySQLDatabase(**database.DB_CONFIG)
 
+
 class BaseModel(Model):
     class Meta:
         database = db
@@ -13,18 +14,18 @@ class BaseModel(Model):
 
 class PCInfo(BaseModel):
     id = PrimaryKeyField()
-    name = CharField(unique=True)
-    ip_address = CharField(unique=True)
+    name = CharField(unique=False)
+    ip_address = CharField(unique=False)
 
     class Meta:
         table_name = 'pc_info'
 
+
 class MetricInfo(BaseModel):
     id = PrimaryKeyField
-    value = CharField(unique=False, max_length=255, primary_key=False)
     name = CharField(unique=False, primary_key=False)
+    value = CharField(unique=False, max_length=255, primary_key=False)
     time = CharField(unique=False, primary_key=False)
 
     class Meta:
-        table_name ='metric_info'
-
+        table_name = 'metric_info'

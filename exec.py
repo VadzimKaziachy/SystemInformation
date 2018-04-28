@@ -15,12 +15,9 @@ logger = logging.getLogger('app')
 
 
 def main():
-    obj = PCInfo(name=os.uname().nodename, ip=get_ip())
-    obj.save()
-
     logger.info('Started')
-    query = PCInfo.select(PCInfo.name, PCInfo.ip)
-    [print('{name} : {ip}'.format(name=x.name, ip=x.ip)) for x in query]
+    obj = PCInfo(name=os.uname().nodename, ip_address=get_ip())
+    obj.save()
     logger.info('Finished')
 
 
@@ -44,7 +41,6 @@ def set_system_info():
 
     for metric in list_metric:
         for i in metric:
-            # print('{name} = TIME: {time} = {value}'.format(name=i.name, value=i.value, time=i.time))
             obj = MetricInfo(name=i.name, value=i.value, time=i.time)
             obj.save()
 
@@ -62,5 +58,5 @@ def get_ip():
 
 
 if __name__ == '__main__':
-    # main()
+    main()
     set_system_info()
