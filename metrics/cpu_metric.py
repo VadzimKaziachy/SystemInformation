@@ -31,4 +31,4 @@ class CPUmetric(Metric):
         return result
 
     def generate_name(self, field, core):
-        return '.'.join([self._type, field, core])
+        return '.'.join([self._type, core, field])

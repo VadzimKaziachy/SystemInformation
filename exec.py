@@ -8,6 +8,7 @@ from metrics.cpu_metric import CPUmetric
 from metrics.disk_metric import Diskmetric
 from metrics.memory_metric import RAMmetric
 from metrics.network_metric import Networkmetric
+import subprocess
 
 logging.config.dictConfig(LOGGING_CONFIG)
 
@@ -16,25 +17,28 @@ logger = logging.getLogger('app')
 
 def main():
     logger.info('Started')
-    obj = PCInfo(name=os.uname().nodename, ip_address=get_ip())
-    obj.save()
+
+    if not PCInfo.select().where(PCInfo.name == os.uname().nodename.lower()):
+        obj = PCInfo(name=os.uname().nodename, ip_address=get_ip())
+        obj.save()
+
     logger.info('Finished')
 
 
 def set_system_info():
-    memore = RAMmetric()
+    memory = RAMmetric()
     disk = Diskmetric()
     network = Networkmetric()
     cpu = CPUmetric()
 
-    memore.retrieve()
+    memory.retrieve()
     disk.retrieve()
     network.retrieve()
     cpu.retrieve()
 
     list_metric = []
 
-    list_metric.append(memore.parse_results())
+    list_metric.append(memory.parse_results())
     list_metric.append(disk.parse_results())
     list_metric.append(network.parse_results())
     list_metric.append(cpu.parse_results())
@@ -58,5 +62,22 @@ def get_ip():
 
 
 if __name__ == '__main__':
-    main()
-    set_system_info()
+    # main()
+    # set_system_info()
+
+    a = subprocess.check_output(['mpstat']).decode('utf-8')
+    # print(a)
+
+    line1 = []
+    line2 = []
+    line3 = []
+
+    for i in a.splitlines():
+        line1.append(i)
+
+    print(line1[2])
+    print(line1[3])
+    line2 = line1[2].split('%')
+    line3 = line1[3].split(' ')
+    print(line2)
+    print(line3)
