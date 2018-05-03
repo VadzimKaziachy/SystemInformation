@@ -4,10 +4,10 @@ from models import MetricInfo
 from datetime import datetime
 
 
-class Networkmetric(Metric):
+class NetworkMetric(Metric):
 
     def __init__(self):
-        super(Networkmetric, self).__init__(type='network')
+        super(NetworkMetric, self).__init__(type='network')
 
     def retrieve(self):
         self._data = psutil.net_io_counters(pernic=False)

@@ -4,10 +4,10 @@ from models import MetricInfo
 from datetime import datetime
 
 
-class CPUmetric(Metric):
+class CPUMetric(Metric):
 
     def __init__(self):
-        super(CPUmetric, self).__init__(type='cpu')
+        super(CPUMetric, self).__init__(type='cpu')
 
     def retrieve(self):
         self._data = psutil.cpu_times_percent(interval=1, percpu=True)

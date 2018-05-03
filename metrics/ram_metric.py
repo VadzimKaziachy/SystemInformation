@@ -1,14 +1,13 @@
-import time
 import psutil
 from metrics.base_metric import Metric
 from models import MetricInfo
 from datetime import datetime
 
 
-class RAMmetric(Metric):
+class RAMMetric(Metric):
 
     def __init__(self):
-        super(RAMmetric, self).__init__(type='ram')
+        super(RAMMetric, self).__init__(type='ram')
 
     def retrieve(self):
         self._data = psutil.virtual_memory()
